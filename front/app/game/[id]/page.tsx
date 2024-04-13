@@ -102,7 +102,7 @@ export default Game;
 
 const useGame = (id: string) => {
   const { data } = useSWR(`game/${id}/status`, fetchGameStatus, {
-    refreshInterval: 5000,
+    refreshInterval: 1000,
   });
 
   const { trigger } = useSWRMutation(`game/${id}/play_turn`, mutatePlayTurn);
