@@ -5,6 +5,7 @@
 postgresql を起動する
 
 ```shell
+cd api
 docker compose up -d
 ```
 
