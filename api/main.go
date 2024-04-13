@@ -20,9 +20,9 @@ func main() {
 	e.Use(middleware.Recover())
 	// TOOD: 本番環境ではCORSを設定する
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		Skipper:      middleware.DefaultSkipper,
-		AllowOrigins: []string{"http://localhost:3000"},
-		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+		Skipper:          middleware.DefaultSkipper,
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 		AllowCredentials: true,
 	}))
 	db, err := db.NewDatabase()
@@ -34,7 +34,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 
 	// Routes
 	// e.GET("/ws", hello)

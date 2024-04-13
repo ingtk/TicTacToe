@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"math/rand"
 	"time"
 
 	"github.com/ingtk/MaruBatsuGame/api/model"
@@ -26,6 +27,7 @@ type api struct {
 	db          Database
 	clock       pkg.Clock
 	idGenerator pkg.IDGenerator
+	random      pkg.Random
 }
 
 type clock struct{}
@@ -41,5 +43,11 @@ func (*idGenerator) Generate() (string, error) {
 }
 
 func NewAPI(db Database) (API, error) {
-	return &api{db: db, clock: &clock{}, idGenerator: &idGenerator{}}, nil
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return &api{
+		db:          db,
+		clock:       &clock{},
+		idGenerator: &idGenerator{},
+		random:      r,
+	}, nil
 }

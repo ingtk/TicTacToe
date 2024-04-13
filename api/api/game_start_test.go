@@ -12,6 +12,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+// ほんとはmockを使ってテストした方がよい
 type testClock struct{ now time.Time }
 
 func (c *testClock) Now() time.Time {
@@ -22,6 +23,12 @@ type testIDGenerator struct{}
 
 func (*testIDGenerator) Generate() (string, error) {
 	return "aaa", nil
+}
+
+type testRandom struct{}
+
+func (*testRandom) Int() int {
+	return 100
 }
 
 func Test_api_GameStart(t *testing.T) {
@@ -57,7 +64,7 @@ func Test_api_GameStart(t *testing.T) {
 			},
 		},
 		{
-			name: "待機中のゲームとマッチング",
+			name: "待機中の相手とマッチング",
 			mock: func(mockdb *db.MockDatabase) {
 				mockdb.EXPECT().PopEmptyGame(gomock.Any(), "user1").Return(&model.Game{
 					ID:          "aaa",
@@ -74,7 +81,7 @@ func Test_api_GameStart(t *testing.T) {
 					HostUserID:  "user2",
 					GuestUserID: "user1",
 					Board:       model.Board{{"", "", ""}, {"", "", ""}, {"", "", ""}},
-					Turn:        "user2",
+					Turn:        "user1",
 					Winner:      "",
 					StartedAt:   &now,
 					CreatedAt:   now,
@@ -91,6 +98,7 @@ func Test_api_GameStart(t *testing.T) {
 				db:          db,
 				clock:       &testClock{now},
 				idGenerator: &testIDGenerator{},
+				random:      &testRandom{},
 			}
 			if tt.mock != nil {
 				tt.mock(db)

@@ -39,9 +39,13 @@ func (api *api) GameStart(c echo.Context) error {
 		return c.JSON(200, &GameStartResponse{game.ID})
 	}
 
-	// TODO: 開始時は手番がHostUsr
 	game.GuestUserID = userID
-	game.Turn = game.HostUserID // TODO: turnを決める
+
+	game.Turn = game.HostUserID
+	if api.random.Int()%2 == 0 {
+		game.Turn = game.GuestUserID
+	}
+
 	now := api.clock.Now()
 	game.StartedAt = &now
 
