@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/ingtk/MaruBatsuGame/api/model"
 	"github.com/labstack/echo/v4"
 )
@@ -37,10 +39,10 @@ func (api *api) GameStatus(c echo.Context) error {
 		return c.JSON(400, &gameStatusResponse{Error: "invalid user"})
 	}
 
-	return c.JSON(200, toGameStatusResponse(userID, game))
+	return c.JSON(200, api.toGameStatusResponse(userID, game))
 }
 
-func toGameStatusResponse(userID string, game *model.Game) gameStatusResponse {
+func (api *api) toGameStatusResponse(userID string, game *model.Game) gameStatusResponse {
 	resp := gameStatusResponse{}
 	resp.HostUserID = game.HostUserID
 	resp.GuestUserID = game.GuestUserID
@@ -70,10 +72,13 @@ func toGameStatusResponse(userID string, game *model.Game) gameStatusResponse {
 		resp.PlayerWin = &win
 		gameEnded = true
 	}
+	resp.GameEnded = gameEnded
 	if game.StartedAt != nil {
 		resp.GameStarted = true
+		if api.clock.Now().Sub(*game.StartedAt) >= 3*time.Minute {
+			resp.GameEnded = true
+		}
 	}
-	resp.GameEnded = gameEnded
 
 	return resp
 }
